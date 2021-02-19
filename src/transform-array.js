@@ -1,66 +1,39 @@
 const CustomError = require("../extensions/custom-error");
 
-module.exports = function transform(arr) { 
-   
-  if(Array.isArray(arr)) {
-    if(arr.length != 0) {
-      let newArr = []
-      let tempArr = []
-
-      for(let i = 0; i < arr.length; i++) {
-        tempArr[i] = arr[i]
-      }
-
-
-
-
-
-      for(let i = 0; i < tempArr.length; i++) {
-        switch(tempArr[i]) {          
-          case '--discard-next':
-            if(i === tempArr.length-1) {
-              break
-            } else {
-              i = i + 1
-              break
-            }
-          case '--discard-prev': 
-            if(i === 0) {
-              break;
-            } else {
-              k--
-              newArr.pop()
-              break
-            }
-            
-          case '--double-next':
-            if(i === tempArr.length-1) {
-              break
-            } else {
-              newArr[k] = tempArr[i+1]
-              k++
-              break;
-            }
-          case '--double-prev':
-            if(i === 0) {
-              break
-            } else {
-              newArr[k] = tempArr[i-1]
-              k++
-              break
-            }
-          default:
-              newArr[k] = tempArr[i]
-              k++
-              break            
+module.exports = function transform(arr) {
+  if (!Array.isArray(arr)) throw new Error("Error");
+  let newArr = [];
+  for (let i = 0; i < arr.length; i++) {
+    switch (arr[i]) {
+      case "--discard-next":
+        if (i === arr.length - 1) break;
+        else {
+          i++;
+          continue;
         }
-
-       }
-       return newArr
-    } else {
-      return arr
+      case "--discard-prev":
+        if (i === 0 || arr[i-2] === '--discard-next') continue;
+        else {
+          newArr.pop();
+          break;
+        }
+      case "--double-next":
+        if (i === arr.length - 1) continue;
+        else {
+          newArr.push(arr[i + 1]);
+          continue;
+        }
+      case "--double-prev":
+        if (i === 0 || arr[i - 2] === "--discard-next") continue;
+        else {
+          newArr.push(arr[i - 1]);
+          continue;
+        }
+      default:
+        newArr.push(arr[i]);
     }
-  } else {
-    throw new 'THROWN'
   }
+  return newArr;
 };
+
+
